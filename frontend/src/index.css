@@ -1,0 +1,21 @@
+/* src/index.css */
+@import "tailwindcss";
+
+/* 1. Tell Tailwind to use class-based dark mode switching */
+@variant dark (&:where(.dark, .dark *));
+
+/* 2. Inject your custom theme colors */
+@theme {
+  --color-dark-bg: #0B0F19;      /* Elegant background */
+  --color-dark-surface: #151B2C; /* Elegant elevated cards */
+  --color-dark-border: #222B44;  /* Elegant sublte lines */
+}
+
+/* Custom utility to hide scrollbars globally or via class */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
