@@ -5,13 +5,14 @@ import Todo from "../models/todos.model.js"
 export const createTodo = async (req, res) => {
   try {
 
-    const { title, description } = req.body;
+    const { title, description, priority } = req.body;
 
 
 
     const task = await Todo.create({
       title,
       description,
+      priority,
       writtenBy: req.user.id,
     });
 
