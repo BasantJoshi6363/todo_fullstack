@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import Loader from './Loader';
 import { useTodoStore } from '../store/useTodoStore';
 import {
     LayoutDashboard,
@@ -12,12 +13,14 @@ import {
     Bell,
     Calendar,
     Plus,
-    MoreHorizontal
+    MoreHorizontal,
+
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, Links, useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
     const [loading, setLoading] = useState(false);
+    const [active, setActive] = useState(false)
 
     const { user, logout } = useTodoStore();
 
@@ -26,7 +29,7 @@ const Sidebar = () => {
         setLoading(true);
         try {
             await logout();
-            setLoading(false);
+            navigate("/signup", { replace: true });
         } catch (error) {
             console.log(error.response)
             toast.error(error.message);
@@ -34,18 +37,29 @@ const Sidebar = () => {
             setLoading(false)
         }
     }
+    if (loading) {
+        return <Loader />
+    }
     // Mock data to match the layout in image_5fa017.png
-    const navigationItems = [
-        { icon: LayoutDashboard, label: 'Dashboard', active: true },
-        { icon: AlertCircle, label: 'Vital Task', active: false },
-        { icon: CheckSquare, label: 'My Task', active: false },
-        { icon: FolderHeart, label: 'Task Categories', active: false },
-        { icon: Settings, label: 'Settings', active: false },
-        { icon: HelpCircle, label: 'Help', active: false },
-    ];
+    const [navigationItems, setNavigationItems] = useState([
+        { icon: LayoutDashboard, label: 'Dashboard', active: true, href: "/" },
+        { icon: AlertCircle, label: 'Vital Task', active: false, href: "/vitaltask" },
+        { icon: CheckSquare, label: 'My Task', active: false, href: "/mytask" },
+        { icon: Settings, label: 'Settings', active: false, href: "/setting" },
+        { icon: HelpCircle, label: 'Help', active: false, href: "/help" },
+    ]);
+
+
+    const handleActive = (index) => {
+        setNavigationItems(prev => prev.map((item, idx) => ({
+            ...item,
+            active: idx === index,
+        })))
+    }
+
     return (
         <div> {/* ================= SIDEBAR NAV ================= */}
-            <aside className="w-64 h-full bg-rose-500 text-white flex flex-col justify-between p-6 relative shrink-0">
+            <aside className="w-64 h-[89vh]  bg-rose-500 text-white flex flex-col justify-between p-6 relative shrink-0">
                 <div>
                     {/* User Profile Summary */}
                     <div className="flex flex-col items-center text-center mt-4 mb-8">
@@ -63,16 +77,18 @@ const Sidebar = () => {
                     {/* Navigation Links */}
                     <nav className="space-y-1">
                         {navigationItems.map((item, idx) => (
-                            <button
+                            <Link
+                                to={item.href}
                                 key={idx}
+                                onClick={() => handleActive(idx)}
                                 className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg text-sm font-semibold transition-all duration-150 ${item.active
                                     ? 'bg-white text-rose-500 shadow-md translate-x-2'
                                     : 'hover:bg-white/10 text-rose-50'
                                     }`}
                             >
                                 <item.icon className="h-5 w-5 shrink-0" />
-                                <span>{item.label}</span>
-                            </button>
+                                <span >{item.label}</span>
+                            </Link>
                         ))}
                     </nav>
                 </div>
