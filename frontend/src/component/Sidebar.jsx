@@ -56,7 +56,7 @@ const Sidebar = () => {
                                 className="w-full h-full object-cover"
                             />
                         </Link>
-                        <h2 className="font-bold text-base tracking-wide">{user.name}</h2>
+                        <h2 className="font-bold text-base tracking-wide capitalize">{user.name}</h2>
                         <p className="text-xs text-rose-100 opacity-80">{user.email}</p>
                     </div>
 
