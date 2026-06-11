@@ -1,5 +1,6 @@
 
 import Todo from "../models/todos.model.js"
+import moment from "moment";
 
 // CREATE NEWS
 export const createTodo = async (req, res) => {
@@ -33,11 +34,14 @@ export const createTodo = async (req, res) => {
 export const getAllTodo = async (req, res) => {
   try {
     const todos = await Todo.find({}).populate("writtenBy", "name email").lean().sort({ createdAt: -1 });
-
+    const output = todos.map(todo => ({
+      ...todo,
+      createdAt: moment(todo.createdAt).format('MMMM Do YYYY, h:mm:ss a')
+    }));
 
     return res.status(200).json({
       success: true,
-      todos
+      todo: output
     });
 
   } catch (error) {
@@ -75,8 +79,7 @@ export const getSingleNews = async (req, res) => {
 // UPDATE NEWS
 export const updateTodo = async (req, res) => {
   try {
-
-    const { title, description, isFinished } = req.body;
+    console.log(req.body)
 
     const task = await Todo.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
@@ -111,6 +114,8 @@ export const deleteTodo = async (req, res) => {
     });
   }
 };
+
+
 
 export const getNewsByCategory = async (req, res) => {
   try {
