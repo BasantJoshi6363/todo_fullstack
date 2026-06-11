@@ -75,6 +75,28 @@ export const getSingleNews = async (req, res) => {
   }
 };
 
+export const fetchCompletedTask = async (req, res) => {
+  try {
+    const todo = await Todo.find({ isFinished: true })
+      .populate("writtenBy", "name email role");
+    // console.log(todo)
+    if (!createTodo) {
+      return res.status(404).json({
+        message: "News not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      todo,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 
 // UPDATE NEWS
 export const updateTodo = async (req, res) => {
