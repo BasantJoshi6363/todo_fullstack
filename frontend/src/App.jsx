@@ -9,6 +9,11 @@ import { useTodoStore } from './store/useTodoStore'
 import { Navigate } from 'react-router-dom'
 import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
+import VitalTask from './pages/VitalTask'
+import MyTask from './pages/MyTask'
+import Setting from './pages/Setting'
+import Help from './pages/Help'
+import Format from './pages/Format'
 const App = () => {
   const { checkAuth, user, isAuth } = useTodoStore();
 
@@ -19,10 +24,14 @@ const App = () => {
   return (
     <div className=''>
       <Routes>
-        <Route path='/' index element={isAuth ? <Dashboard /> : <Navigate to={"/signup"} replace />} />
+        <Route path='/' index element={isAuth ? <Format><Dashboard /></Format> : <Navigate to={"/signup"} replace />} />
         <Route path='/signup' element={isAuth ? <Navigate to={"/"} replace /> : <SignUp />} />
         <Route path='/signin' element={isAuth ? <Navigate to={"/"} replace /> : <SignIn />} />
-        <Route path='/profile' element={isAuth ? <Profile /> : <SignIn />} />
+        <Route path='/profile' element={isAuth ? <Format><Profile /></Format> : <Navigate to={"/signup"} replace />} />
+        <Route path='/vitaltask' element={isAuth ? <Format><VitalTask /></Format> : <SignIn />} />
+        <Route path='/mytask' element={isAuth ? <Format><MyTask /></Format> : <SignIn />} />
+        <Route path='/setting' element={isAuth ? <Format><Setting /></Format> : <SignIn />} />
+        <Route path='/help' element={isAuth ? <Format><Help /></Format> : <SignIn />} />
         <Route path='/logout' />
         <Route path='*' element={<NotFound />} />
         {/* <Route path='/update/:id' /> */}
