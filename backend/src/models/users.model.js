@@ -23,6 +23,17 @@ const userSchema = new mongoose.Schema(
             enum: ["user", "superadmin"],
             default: "user",
         },
+        contactNumber: {
+            type: Number,
+           
+        },
+        position: {
+            type: String,
+        },
+        profilePicture : {
+            type : String,
+            default : "https://res.cloudinary.com/dygejaq0z/image/upload/v1781018027/newsportal/iurki6qmsariznvqgnnw.png"
+        },
 
         refreshToken: {
             type: String,
