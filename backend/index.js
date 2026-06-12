@@ -13,7 +13,7 @@ dotenv.config();
 
 const app = express();
 app.use(cors({
-    origin: "http://localhost:5173", // or your frontend URL
+    origin: "https://todo-fullstack-xf83-kjxf2hr6k-basant-joshis-projects.vercel.app/", // or your frontend URL
     credentials: true
 }));
 app.use(express.json());
