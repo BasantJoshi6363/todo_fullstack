@@ -12,8 +12,12 @@ import todoRouter from "./src/routes/todos.route.js";
 dotenv.config();
 
 const app = express();
+const allowedOrigins = {
+    development: ['http://localhost:5173'],
+    production: ['https://todo-fullstack-xf83-kjxf2hr6k-basant-joshis-projects.vercel.app/']
+};
 app.use(cors({
-    origin: "https://todo-fullstack-xf83-kjxf2hr6k-basant-joshis-projects.vercel.app/", // or your frontend URL
+    origin: allowedOrigins, // or your frontend URL
     credentials: true
 }));
 app.use(express.json());
@@ -21,7 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(
 ));
 
-app.get("/",(req,res)=>{
+app.get("/", (req, res) => {
     res.send("hello")
 })
 app.use("/api/auth", userRouter);
