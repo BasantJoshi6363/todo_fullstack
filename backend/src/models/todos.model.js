@@ -5,11 +5,13 @@ const todoSchema = new mongoose.Schema(
     title: {
       type: String,
       required: true,
+      trim : true
     },
 
     description: {
       type: String,
       required: true,
+      trim : true
     },
     isFinished: {
       type: Boolean,
@@ -18,6 +20,7 @@ const todoSchema = new mongoose.Schema(
     priority: {
       type: String,
       enum: ["extreme", "moderate", "low"],
+      trim : true,
       default: "moderate"
     },
     writtenBy: {
