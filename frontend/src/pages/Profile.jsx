@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, PencilLine } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTodoStore } from '../store/useTodoStore';
 
 const Profile = () => {
-  // Initialize form state with mock data from the image
+  const { user } = useTodoStore();
+  const [updateImg,setUpdateImg] = useState(false);
   const [profileData, setProfileData] = useState({
-    firstName: 'Sundar',
-    lastName: 'Gurung',
-    email: 'sundargurung360@gmail.com',
+    firstName: user.name.split(" ")[0],
+    lastName: user.name.split(" ")[1],
+    email: user.email,
     contactNumber: '',
     position: ''
   });
@@ -27,11 +29,10 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 sm:p-6 font-sans antialiased text-gray-700">
-      
-      {/* Outer Card Wrapper */}
-      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm max-w-4xl w-full p-6 md:p-8 space-y-6">
-        
+    <div className="size-full bg-slate-50 flex flex-col md:flex-row font-sans antialiased text-gray-700 overflow-x-hidden">
+
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm max-w-4xl w-full p-6 md:p-8 space-y-2">
+
         {/* Header Section */}
         <div className="flex justify-between items-center border-b border-gray-100 pb-4">
           <div className="relative">
@@ -39,9 +40,9 @@ const Profile = () => {
             {/* The distinct orange accent bar underneath heading */}
             <div className="absolute -bottom-4 left-0 w-24 h-1 bg-orange-500 rounded-full" />
           </div>
-          
-          <Link 
-            to="/" 
+
+          <Link
+            to="/"
             className="text-xs font-bold text-gray-600 hover:text-gray-900 transition-colors underline decoration-2 underline-offset-2 flex items-center gap-1"
           >
             Go Back
@@ -49,24 +50,29 @@ const Profile = () => {
         </div>
 
         {/* User Profile Header Meta Info */}
-        <div className="flex items-center gap-4 pt-2">
+        <div className=" relative flex items-center gap-10 pt-2">
+            <PencilLine onClick={()=>setUpdateImg(true)} className='absolute left-20 top-4  font-semibold hover:opacity-60 transition-1' size={16} />
           <div className="w-20 h-20 rounded-full overflow-hidden border border-gray-200 shrink-0">
-            <img 
-              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" 
-              alt="Sundar Gurung" 
+            <img
+              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
+              alt="img"
               className="w-full h-full object-cover"
             />
           </div>
+          {updateImg && <div className="">
+            <input type="file" accept='image/*' />
+          </div>}
+          
           <div>
-            <h2 className="text-lg font-bold text-gray-800 leading-tight">Sundar Gurung</h2>
-            <p className="text-xs text-gray-400 font-medium mt-0.5">sundargurung360@gmail.com</p>
+            <h2 className="text-lg font-bold text-gray-800 leading-tight capitalize">{user.name}</h2>
+            <p className="text-xs text-gray-400 font-medium mt-0.5">{user.email}</p>
           </div>
         </div>
 
         {/* Inner Bordered Form Block Box Container */}
         <div className="border border-gray-200 rounded-xl bg-slate-50/30 p-6 md:p-8">
           <form onSubmit={handleSubmit} className="space-y-5 max-w-2xl">
-            
+
             {/* First Name Field */}
             <div className="space-y-1.5">
               <label htmlFor="firstName" className="block text-xs font-bold text-gray-800 tracking-wide">
@@ -150,7 +156,7 @@ const Profile = () => {
               >
                 Save Changes
               </button>
-              
+
               <Link
                 to="/dashboard"
                 className="px-8 py-2 bg-orange-600 text-white font-semibold text-xs rounded-md shadow-sm hover:bg-orange-700 text-center transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
