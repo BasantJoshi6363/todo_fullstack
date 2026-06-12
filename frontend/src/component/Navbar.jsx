@@ -20,7 +20,7 @@ export default function Navbar() {
           {/* Logo Section */}
           <div className="flex items-center gap-2 font-semibold text-slate-900 dark:text-white tracking-tight">
             <Layers size={20} className="text-indigo-600 dark:text-indigo-400" />
-            <span>TodoPlanner</span>
+            <h3><span>Task</span>Planner</h3>
           </div>
 
           {/* Desktop Navigation Links */}
