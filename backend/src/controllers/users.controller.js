@@ -183,7 +183,6 @@ export const getProfile = async (req, res) => {
 };
 
 
-
 export const logout = async (req, res) => {
 
     res.clearCookie("accessToken");
@@ -356,3 +355,39 @@ export const resetPassword = async (req, res) => {
     }
 };
 
+export const refreshToken = async (req, res) => {
+    try {
+        const refreshToken = req.cookies.refreshToken;
+        console.log(refreshToken);
+
+        if (!refreshToken) {
+            return res.status(401).json({ message: "Access Denied: No Refresh Token Provided" });
+        }
+        jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decodedUser) => {
+            if (err) {
+                // Token is either expired or tampered with
+                return res.status(403).json({ message: "Invalid or expired refresh token" });
+            }
+
+            // Token is valid! Generate a brand new Access Token
+            const newAccessToken = jwt.sign(
+                { id: decodedUser.id },
+                process.env.ACCESS_TOKEN_SECRET,
+                { expiresIn: '15m' } // Short-lived access token
+            );
+
+            // Send the new access token back as an HttpOnly cookie
+            res.cookie('accessToken', newAccessToken, {
+                httpOnly: true,     // Prevents XSS attacks (JS can't read it)
+                secure: process.env.NODE_ENV === 'production', // true in production (HTTPS only)
+                sameSite: 'lax',    // Helps protect against CSRF attacks
+                maxAge: 15 * 60 * 1000 // 15 minutes in milliseconds
+            });
+            // const user = await User.findById(decodedUser._id).select("-password -refrshToken");
+
+            return res.status(200).json({ message: "Token refreshed successfully" });
+        })
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
