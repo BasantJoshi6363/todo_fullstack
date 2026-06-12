@@ -5,9 +5,11 @@ import moment from "moment";
 // CREATE NEWS
 export const createTodo = async (req, res) => {
   try {
+    
 
     const { title, description, priority } = req.body;
-
+    console.log(req.body);
+    
 
 
     const task = await Todo.create({
@@ -96,7 +98,28 @@ export const fetchCompletedTask = async (req, res) => {
     });
   }
 };
+export const pendingTask = async (req, res) => {
+  try {
+    const todo = await Todo.find({ isFinished: false })
+      .populate("writtenBy", "name email role");
+    // console.log(todo)
+    if (!createTodo) {
+      return res.status(404).json({
+        message: "News not found",
+      });
+    }
+   
 
+    res.status(200).json({
+      success: true,
+      todo,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
 
 // UPDATE NEWS
 export const updateTodo = async (req, res) => {
@@ -123,7 +146,8 @@ export const updateTodo = async (req, res) => {
 export const deleteTodo = async (req, res) => {
   try {
 
-
+    console.log("hit");
+    
     await Todo.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
