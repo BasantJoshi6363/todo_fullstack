@@ -9,6 +9,7 @@ import {
     updateUser,
     forgotPassword,
     resetPassword,
+    refreshToken,
 } from "../controllers/users.controller.js";
 import { authMiddleware, isSuperAdmin } from "../middlewares/auth.middleware.js";
 
@@ -22,6 +23,7 @@ userRouter.post("/forgotpassword", forgotPassword);
 userRouter.post("/resetpassword/:token", resetPassword);
 
 
+userRouter.post("/refresh", authMiddleware, refreshToken);
 userRouter.post("/logout", authMiddleware, logout);
 userRouter.get("/profile", authMiddleware, getProfile);
 // userRouter.get("/all", authMiddleware, getAllAdmin);
