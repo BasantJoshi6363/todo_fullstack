@@ -2,12 +2,22 @@ import { create } from 'zustand';
 import { toast } from 'react-hot-toast';
 import { axiosInstance } from '../lib/axios';
 import { Navigate } from 'react-router-dom';
+// import { fetchCompletedTask } from '../../../backend/src/controllers/todos.controller';
 
 export const useTodoStore = create((set) => ({
     loading: false,
     user: null,
     isAuth: false,
     todos: [],
+    tasks: [],
+    singleTask: [],
+    renderListener: false,
+    completedTask: [],
+    pendingTask: [],
+    setUser: (user) => {
+        set({ user: user })
+    },
+    setRenderListener: (value) => { set({ renderListener: value }) },
     login: async (formdata) => {
         set({ loading: true });
         try {
@@ -28,6 +38,7 @@ export const useTodoStore = create((set) => ({
             toast.error(message);
             set({
                 user: null,
+                isAuth: false
             });
             console.log(error);
         } finally {
@@ -59,7 +70,7 @@ export const useTodoStore = create((set) => ({
         } finally {
             set({ loading: false });
         }
-       
+
     },
     checkAuth: async () => {
 
@@ -89,14 +100,35 @@ export const useTodoStore = create((set) => ({
         }
     },
     logout: async () => {
-
         set({ loading: true });
+
         try {
-            const response = await axiosInstance.post("/auth/logout");
+            await axiosInstance.post("/auth/logout");
 
             set({
                 user: null,
-                isAuth: false
+                isAuth: false,
+            });
+
+            toast.success("Logout successful");
+        } catch (error) {
+            const message =
+                error.response?.data?.message ||
+                error.message ||
+                "Something went wrong";
+
+            toast.error(message);
+        } finally {
+            set({ loading: false });
+        }
+    },
+    updateProfile: async (data) => {
+        set({ loading: true });
+        try {
+            const response = await axiosInstance.put(`/auth/updateuser`, data);
+
+            set({
+                user: response.data.user,
             });
 
         } catch (error) {
@@ -114,7 +146,185 @@ export const useTodoStore = create((set) => ({
         } finally {
             set({ loading: false });
         }
-    }
+    },
+
+    fetchTask: async () => {
+        set({ loading: true });
+        try {
+            const response = await axiosInstance.get(`/todo`);
+
+            set({
+                tasks: response.data.todo,
+            });
+
+        } catch (error) {
+            const message =
+                error.response?.data?.message || error.message ||
+                "Something went wrong";
+
+            toast.error("todo creation failed");
+            console.log(error);
+            set({
+                loading: false,
+                tasks: null,
+            });
+        } finally {
+            set({ loading: false });
+        }
+    },
+    fetchSingleTask: async (data) => {
+        set({ loading: true });
+        try {
+            const response = await axiosInstance.post(`/todo/create`, data);
+
+            set({
+                tasks: response.data.task,
+            });
+
+        } catch (error) {
+            const message =
+                error.response?.data?.message || error.message ||
+                "Something went wrong";
+
+            toast.error("todo creation failed");
+            console.log(error);
+            set({
+                loading: false,
+                tasks: null,
+            });
+        } finally {
+            set({ loading: false });
+        }
+    },
+    completeTask: async (data, id) => {
+        set({ loading: true });
+        try {
+            const response = await axiosInstance.put(`/todo/${id}`, { isFinished: data });
+            toast.success("task completed.")
+
+        } catch (error) {
+            const message =
+                error.response?.data?.message || error.message ||
+                "Something went wrong";
+
+            toast.error("todo creation failed");
+            console.log(error);
+            set({
+                loading: false,
+                tasks: null,
+            });
+        } finally {
+            set({ loading: false });
+        }
+    },
+    fetchCompletedTask: async (data, id) => {
+        set({ loading: true });
+        try {
+            const response = await axiosInstance.get(`/todo/completed-task`);
+            set({ completedTask: response.data.todo });
+
+        } catch (error) {
+            const message =
+                error.response?.data?.message || error.message ||
+                "Something went wrong";
+
+            toast.error("todo creation failed");
+            console.log(error);
+            set({
+                loading: false,
+                tasks: null,
+            });
+        } finally {
+            set({ loading: false });
+        }
+    },
+    fetchPendingTask: async (data, id) => {
+        set({ loading: true });
+        try {
+            const response = await axiosInstance.get(`/todo/pending-task`);
+            set({ pendingTask: response.data.todo });
+
+        } catch (error) {
+            const message =
+                error.response?.data?.message || error.message ||
+                "Something went wrong";
+
+            toast.error("todo creation failed");
+            console.log(error);
+            set({
+                loading: false,
+                tasks: null,
+            });
+        } finally {
+            set({ loading: false });
+        }
+    },
+    createTask: async (data) => {
+        console.log(data)
+        set({ loading: true });
+        try {
+            const response = await axiosInstance.post(`/todo/create`, data);
+            toast.success("task created")
+
+        } catch (error) {
+            const message =
+                error.response?.data?.message || error.message ||
+                "Something went wrong";
+
+            toast.error("todo creation failed");
+            console.log(error);
+            set({
+                loading: false,
+                tasks: null,
+            });
+        } finally {
+            set({ loading: false });
+        }
+    },
+    deleteTodo: async (id) => {
+        console.log(id)
+        set({ loading: true });
+        try {
+            const response = await axiosInstance.delete(`/todo/${id}`);
+            toast.success("task deleted")
+
+        } catch (error) {
+            const message =
+                error.response?.data?.message || error.message ||
+                "Something went wrong";
+
+            toast.error("todo creation failed");
+            console.log(error);
+            set({
+                loading: false,
+                tasks: null,
+            });
+        } finally {
+            set({ loading: false });
+        }
+    },
+    updateTask: async (data, id) => {
+        console.log(data)
+        set({ loading: true });
+        try {
+            const response = await axiosInstance.put(`/todo/${id}`, data);
+            toast.success("task deleted")
+
+        } catch (error) {
+            const message =
+                error.response?.data?.message || error.message ||
+                "Something went wrong";
+
+            toast.error("todo creation failed");
+            console.log(error);
+            set({
+                loading: false,
+                tasks: null,
+            });
+        } finally {
+            set({ loading: false });
+        }
+    },
 
 }));
 
