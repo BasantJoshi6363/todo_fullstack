@@ -21,14 +21,16 @@ import Sidebar from '../component/Sidebar';
 import CreateTaskCard from '../component/modal/CreateTaskCard'; // Imported as your blur overlay modal
 import TaskCard from '../component/Task/TaskCard';
 import EditTaskModal from '../component/modal/EditTaskCard';
+import TaskStats from '../component/Task/TaskStats';
 
 const Dashboard = () => {
-    const { user, fetchTask, tasks, renderListener, completedTask, fetchPendingTask, fetchCompletedTask, pendingTask } = useTodoStore();
+    const { user, fetchTask, tasks, renderListener, completedTask, fetchPendingTask, fetchCompletedTask, pendingTask, getStats, stats } = useTodoStore();
     const [click, setOnClick] = useState(false);
     useEffect(() => {
         fetchTask();
         fetchCompletedTask();
         fetchPendingTask();
+        getStats();
     }, [fetchTask, fetchCompletedTask, fetchPendingTask, renderListener])
 
 
@@ -92,9 +94,10 @@ const Dashboard = () => {
 
                                 {/* Vertical Task Cards List Container */}
                                 <div className="space-y-4">
-                                    {pendingTask.map((task) => {
+                                    {tasks.length === 0 ? "No Task Founds" : pendingTask.map((task) => {
                                         return <TaskCard key={task._id} task={task} />
                                     })}
+
                                 </div>
                             </div>
 
@@ -105,48 +108,20 @@ const Dashboard = () => {
                         <div className="space-y-6 w-full">
 
                             {/* Analytics Progress Gauges */}
-                            <div className="bg-white p-4 sm:p-6 rounded-xl border border-gray-100 shadow-sm">
-                                <h3 className="text-xs font-bold text-rose-400 uppercase tracking-wider mb-6">Task Status</h3>
-                                <div className="grid grid-cols-3 gap-2 text-center">
-                                    <div className="flex flex-col items-center">
-                                        <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-full border-[6px] border-emerald-500 border-t-emerald-500/20">
-                                            <span className="text-[10px] sm:text-xs font-bold text-gray-700">99%</span>
-                                        </div>
-                                        <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 mt-2 flex items-center gap-1 justify-center">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" /> <span className="truncate">Completed</span>
-                                        </span>
-                                    </div>
-                                    <div className="flex flex-col items-center">
-                                        <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-full border-[6px] border-blue-500 border-l-blue-500/20">
-                                            <span className="text-[10px] sm:text-xs font-bold text-gray-700">46%</span>
-                                        </div>
-                                        <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 mt-2 flex items-center gap-1 justify-center">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" /> <span className="truncate">In Prog...</span>
-                                        </span>
-                                    </div>
-                                    <div className="flex flex-col items-center">
-                                        <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-full border-[6px] border-rose-500 border-b-rose-500/20">
-                                            <span className="text-[10px] sm:text-xs font-bold text-gray-700">13%</span>
-                                        </div>
-                                        <span className="text-[9px] sm:text-[10px] font-bold text-gray-500 mt-2 flex items-center gap-1 justify-center">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" /> <span className="truncate">Not Started</span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
+                            <TaskStats stats={stats}/>
 
-                            {/* Archive Completed Feed */}
-                            <div className="bg-white p-4 sm:p-6 rounded-xl border border-gray-100 shadow-sm space-y-4">
-                                <div className="flex items-center gap-2 text-rose-400 font-bold text-xs uppercase tracking-wider">
-                                    <span>☑️</span>
-                                    <span>Completed Task</span>
+                                {/* Archive Completed Feed */}
+                                <div className="bg-white p-4 sm:p-6 rounded-xl border border-gray-100 shadow-sm space-y-4">
+                                    <div className="flex items-center gap-2 text-rose-400 font-bold text-xs uppercase tracking-wider">
+                                        <span>☑️</span>
+                                        <span>Completed Task</span>
+                                    </div>
+                                    <div className="space-y-3">
+                                        {completedTask.length === 0 ? "No Completed Task" : completedTask.map((task) => {
+                                            return <TaskCard key={task._id} task={task} />
+                                        })}
+                                    </div>
                                 </div>
-                                <div className="space-y-3">
-                                    {completedTask.map((task) => (
-                                        <TaskCard key={task._id} task={task} />
-                                    ))}
-                                </div>
-                            </div>
 
                         </div>
                     </div>
