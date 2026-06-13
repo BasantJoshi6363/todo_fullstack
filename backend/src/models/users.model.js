@@ -25,19 +25,26 @@ const userSchema = new mongoose.Schema(
         },
         contactNumber: {
             type: Number,
-           
+
         },
         position: {
             type: String,
         },
-        profilePicture : {
-            type : String,
-            default : "https://res.cloudinary.com/dygejaq0z/image/upload/v1781018027/newsportal/iurki6qmsariznvqgnnw.png"
+        profilePicture: {
+            type: String,
+            default: "https://res.cloudinary.com/dygejaq0z/image/upload/v1781018027/newsportal/iurki6qmsariznvqgnnw.png"
         },
 
         refreshToken: {
             type: String,
         },
+        todos: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Todo",
+                required: true
+            }
+        ]
     },
     {
         timestamps: true,
