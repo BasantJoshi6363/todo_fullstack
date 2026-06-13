@@ -14,6 +14,7 @@ export const useTodoStore = create((set) => ({
     renderListener: false,
     completedTask: [],
     pendingTask: [],
+    stats: [],
     setUser: (user) => {
         set({ user: user })
     },
@@ -310,6 +311,27 @@ export const useTodoStore = create((set) => ({
             const response = await axiosInstance.put(`/todo/${id}`, data);
             toast.success("task deleted")
 
+        } catch (error) {
+            const message =
+                error.response?.data?.message || error.message ||
+                "Something went wrong";
+
+            toast.error("todo creation failed");
+            console.log(error);
+            set({
+                loading: false,
+                tasks: null,
+            });
+        } finally {
+            set({ loading: false });
+        }
+    },
+    getStats: async () => {
+        set({ loading: true });
+        try {
+            const response = await axiosInstance.get(`/todo/stats`);
+            console.log(response)
+            set({ stats: response.data.stats })
         } catch (error) {
             const message =
                 error.response?.data?.message || error.message ||
