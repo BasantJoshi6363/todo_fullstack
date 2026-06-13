@@ -358,7 +358,6 @@ export const resetPassword = async (req, res) => {
 export const refreshToken = async (req, res) => {
     try {
         const refreshToken = req.cookies.refreshToken;
-        console.log(refreshToken);
 
         if (!refreshToken) {
             return res.status(401).json({ message: "Access Denied: No Refresh Token Provided" });
