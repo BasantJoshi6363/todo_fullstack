@@ -5,13 +5,13 @@ const todoSchema = new mongoose.Schema(
     title: {
       type: String,
       required: true,
-      trim : true
+      trim: true
     },
 
     description: {
       type: String,
       required: true,
-      trim : true
+      trim: true
     },
     isFinished: {
       type: Boolean,
@@ -20,14 +20,18 @@ const todoSchema = new mongoose.Schema(
     priority: {
       type: String,
       enum: ["extreme", "moderate", "low"],
-      trim : true,
+      trim: true,
       default: "moderate"
     },
-    writtenBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+    status: {
+      type: String,
+      enum: ["pending", "in progress", "finished"],
+      default: "pending"
     },
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    }
   },
   {
     timestamps: true,
