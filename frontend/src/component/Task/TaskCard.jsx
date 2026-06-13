@@ -122,7 +122,7 @@ const TaskCard = ({ task, onEdit }) => {
                     <div className="flex flex-wrap items-center justify-between gap-1 pt-1">
                         <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${task.isFinished ? 'text-emerald-500 bg-emerald-50' : 'text-amber-500 bg-amber-50'
                             }`}>
-                            Status: {task.isFinished ? "Completed" : "Pending"}
+                            Status: {task.isFinished ? "Completed" : "pending"}
                         </span>
                         <span className="text-[9px] text-gray-400 italic pr-6">
                             {formatted}
