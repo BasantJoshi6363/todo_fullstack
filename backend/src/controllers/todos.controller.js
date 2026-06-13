@@ -1,23 +1,24 @@
 
 import Todo from "../models/todos.model.js"
 import moment from "moment";
+import User from "../models/users.model.js";
 
 // CREATE NEWS
 export const createTodo = async (req, res) => {
   try {
-    
+    const { id } = req.user;
 
     const { title, description, priority } = req.body;
-    console.log(req.body);
-    
-
 
     const task = await Todo.create({
       title,
       description,
       priority,
-      writtenBy: req.user.id,
+      author: id
     });
+    const user = await User.findById(id);
+    user.todos.push(task._id);
+    user.save();
 
     res.status(201).json({
       success: true,
@@ -35,15 +36,15 @@ export const createTodo = async (req, res) => {
 // GET ALL NEWS
 export const getAllTodo = async (req, res) => {
   try {
-    const todos = await Todo.find({}).populate("writtenBy", "name email").lean().sort({ createdAt: -1 });
-    const output = todos.map(todo => ({
-      ...todo,
-      createdAt: moment(todo.createdAt).format('MMMM Do YYYY, h:mm:ss a')
-    }));
+    const { id } = req.user;
+
+    const user = await User.findById(id).select("-password -refreshToken").populate("todos")
+
+
 
     return res.status(200).json({
       success: true,
-      todo: output
+      todo: user.todos
     });
 
   } catch (error) {
@@ -58,7 +59,7 @@ export const getAllTodo = async (req, res) => {
 export const getSingleNews = async (req, res) => {
   try {
     const news = await News.findById(req.params.id)
-      .populate("writtenBy", "name email role");
+      .populate("Todos", "name email role");
 
     if (!news) {
       return res.status(404).json({
@@ -79,14 +80,8 @@ export const getSingleNews = async (req, res) => {
 
 export const fetchCompletedTask = async (req, res) => {
   try {
-    const todo = await Todo.find({ isFinished: true })
-      .populate("writtenBy", "name email role");
-    // console.log(todo)
-    if (!createTodo) {
-      return res.status(404).json({
-        message: "News not found",
-      });
-    }
+    const todo = await Todo.find({ isFinished: true, author: req.user.id });
+
 
     res.status(200).json({
       success: true,
@@ -100,16 +95,7 @@ export const fetchCompletedTask = async (req, res) => {
 };
 export const pendingTask = async (req, res) => {
   try {
-    const todo = await Todo.find({ isFinished: false })
-      .populate("writtenBy", "name email role");
-    // console.log(todo)
-    if (!createTodo) {
-      return res.status(404).json({
-        message: "News not found",
-      });
-    }
-   
-
+    const todo = await Todo.find({ isFinished: false, author: req.user.id })
     res.status(200).json({
       success: true,
       todo,
@@ -146,8 +132,7 @@ export const updateTodo = async (req, res) => {
 export const deleteTodo = async (req, res) => {
   try {
 
-    console.log("hit");
-    
+
     await Todo.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
@@ -160,6 +145,44 @@ export const deleteTodo = async (req, res) => {
     });
   }
 };
+
+export const getStats = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password -refreshToken");
+    const totalTask = await user.todos.length;
+
+    const data = await user.populate("todos");
+
+    const finishedTask = await data.todos.filter(val => val.isFinished).length;
+
+
+
+    const notFinishedTask = totalTask - finishedTask;
+
+    function calculatePercent(task, total) {
+      return (task / total) * 100;
+    }
+    const finishedTaskPercent = calculatePercent(finishedTask, totalTask);
+    const notFinishedTaskPercent = calculatePercent(notFinishedTask, totalTask);
+    // const finishTaskPercent =
+    //   totalTask > 0 ? (finishedTask / totalTask) * 100 : 0;
+
+    // const unFinishTaskPercent =
+    //   totalTask > 0 ? (notFinishedTask / totalTask) * 100 : 0;
+
+    res.status(200).json({
+      success: true,
+      stats: {
+        totalTask,
+        finishedTask,
+        finishPercent: Math.ceil(finishedTaskPercent),
+        notFinishPercent: Math.ceil(notFinishedTaskPercent)
+      },
+    });
+  } catch (error) {
+
+  }
+}
 
 
 
