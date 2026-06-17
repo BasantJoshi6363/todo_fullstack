@@ -110,7 +110,6 @@ export const pendingTask = async (req, res) => {
 // UPDATE NEWS
 export const updateTodo = async (req, res) => {
   try {
-    console.log(req.body)
 
     const task = await Todo.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
