@@ -43,9 +43,6 @@ export const generatePasswordResetToken = (userId) => {
 
 export const register = async (req, res) => {
     try {
-        console.log("hit");
-
-
         const { name, email, password } =
             req.body;
 
